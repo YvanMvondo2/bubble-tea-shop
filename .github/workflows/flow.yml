@@ -4,12 +4,10 @@ on:
 # Ajoutez l’événement pull_request pour que le workflow s’exécute automatiquement chaque fois qu’une demande de tirage est créée ou mise à jour.
   pull_request:
     branches:
-      - main
       - develop
   # Ajoutez l’événement push pour que le workflow s’exécute automatiquement chaque fois qu’un commit est poussé vers une branche appelée develop.
   push:
     branches:
-
       - pre-dev
 #  Regroupe tous les travaux qui s’exécutent dans le fichier de workflow.
 jobs:
