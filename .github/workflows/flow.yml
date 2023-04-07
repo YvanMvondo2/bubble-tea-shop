@@ -9,9 +9,9 @@ on:
   # Ajoutez l’événement push pour que le workflow s’exécute automatiquement chaque fois qu’un commit est poussé vers une branche appelée develop.
   push:
     branches:
-      # - main
+      - main
       - develop
-      # - pre-dev
+      - pre-dev
 #  Regroupe tous les travaux qui s’exécutent dans le fichier de workflow.
 jobs:
   flutter_test: 
@@ -66,7 +66,7 @@ jobs:
       - run: flutter build apk
       - run: flutter build appbundle
   
-  build_appbundle:
+  build_ios:
     name: Build FLutter (ios)
     needs: [flutter_test]
     run-on: macos-latest
