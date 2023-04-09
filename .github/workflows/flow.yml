@@ -5,7 +5,7 @@ on:
   pull_request:
     branches:
       - develop
-  # Ajoutez l’événement push pour que le workflow s’exécute automatiquement chaque fois qu’un commit est poussé vers une branche appelée develop.
+  # Ajoutez l’événement push pour que le workflow s’exécute automatiquement chaque fois qu’un commit est poussé vers une branche appelée pre-dev.
   push:
     branches:
       - pre-dev
@@ -29,6 +29,8 @@ jobs:
       - run: flutter pub get
       - run: flutter analyse
       - run: flutter test
+      - run: flutter build apk
+      - run: flutter build appbundle
       # - run: flutter build apk --debug --split-per-abi
       # - run: |
       #     flutter build ios --no-codesign
