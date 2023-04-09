@@ -11,77 +11,31 @@ on:
       - pre-dev
 #  Regroupe tous les travaux qui s’exécutent dans le fichier de workflow.
 jobs:
+
   flutter_test: 
     name: Run flutter test and analyse
-    # Configure le travail pour qu’il s’exécute sur un exécuteur ubuntu-latest ou macos-latest hébergé par GitHub
+# Configure le travail pour qu’il s’exécute sur un exécuteur ubuntu-latest ou macos-latest hébergé par GitHub
     runs-on: ubuntu-latest
     steps:
-      - name: test
-      # utilise l'action "checkout" pour récupérer le code source du projet à partir du référentiel GitHub.
-      - uses: actions/checkout@v1
-      - uses: actions/setup-java@v1
+# utilise l'action "checkout" pour récupérer le code source du projet à partir du référentiel GitHub.
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v2
         with:
-          java-version: '12.x'
-      # utilise l'action "subosito/flutter-action" pour installer la version stable de Flutter
-      - uses: subosito/flutter-action@v1
+          distribution: 'zulu'
+          java-version: '11'
+# utilise l'action "subosito/flutter-action" pour installer la version stable de Flutter
+      - uses: subosito/flutter-action@v2
         with:
+          flutter-version: '3.x'
           channel: 'stable'
+          architecture: x64
+     # Get flutter dependencies.
+      - run: flutter clean
       - run: flutter pub get
-      - run: flutter analyse
+      - run: flutter analyze
       - run: flutter test
-      - run: flutter build apk
-      - run: flutter build appbundle
-      # - run: flutter build apk --debug --split-per-abi
-      # - run: |
-      #     flutter build ios --no-codesign
-      #     cd build/ios/iphoneos
-      #     mkdir Payload
-      #     cd Payload
-      #     ln -s ../Runner.app
-      #     cd ..
-      #     zip -r app.ipa Payload
-      # - name: Push to Releases
-      #   uses: ncipollo/release-action@v1
-      #   with:
-      #     artifacts: "build/app/outputs/apk/debug/*,build/ios/iphoneos/app.ipa"
-      #     tag: v1.0.${{ github.run_number }}
-      #     token: ${{ secrets.TOKEN }}
-  build_appbundle:
-    name: Build FLutter (Android)
-    needs: [flutter_test]
-    run-on: ubuntu-latest
-    steps:
-      # utilise l'action "checkout" pour récupérer le code source du projet à partir du référentiel GitHub.
-      - uses: actions/checkout@v3
-      - uses: actions/setup-java@v3
-        with:
-          java-version: '12.x'
-      # utilise l'action "subosito/flutter-action" pour installer la version stable de Flutter
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-      - run: flutter pub get
-      - run: flutter clean
-      - run: flutter build apk
-      - run: flutter build appbundle
-  
-  build_ios:
-    name: Build FLutter (ios)
-    needs: [flutter_test]
-    run-on: macos-latest
-    steps:
-      # utilise l'action "checkout" pour récupérer le code source du projet à partir du référentiel GitHub.
-      - uses: actions/checkout@v3
-      - uses: actions/setup-java@v3
-        with:
-          java-version: '12.x'
-      # utilise l'action "subosito/flutter-action" pour installer la version stable de Flutter
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-      - run: flutter pub get
-      - run: flutter clean
-      - run: flutter build ios --release --no-codesign
-
-# push to master, main, develop
-# pull request on main master
+# - run: flutter build apk
+# - run: flutter build appbundle
+    
+      # Check for any formatting issues in the code.
+      - run: flutter format lib/** --set-exit-if-changed.
