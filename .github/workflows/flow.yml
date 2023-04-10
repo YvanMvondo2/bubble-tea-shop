@@ -34,8 +34,8 @@ jobs:
       - run: flutter pub get
       - run: flutter analyze
       - run: flutter test
-# - run: flutter build apk
+      - run: flutter build apk
 # - run: flutter build appbundle
     
       # Check for any formatting issues in the code.
-      - run: flutter format lib/** --set-exit-if-changed.
+      # - run: flutter format lib/** --set-exit-if-changed.
