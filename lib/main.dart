@@ -1,65 +1,104 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'app_routes.dart';
+import 'configuration.dart';
+import 'controller/master_controller.dart';
 
-import 'models/favorites.dart';
-import 'screens/favorite.dart';
-import 'screens/home_page.dart';
+import 'layout/letter_spacing.dart';
+import 'momo/colors.dart';
+part 'init.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await setupDependency(true);
+  runApp(const RootRestorationScope(restorationId: 'root',
+  child: MyApp()));
 }
 
-final _router = GoRouter(
-  routes: [
-    GoRoute(
-      path: HomePage.routeName,
-      builder: (context, state) {
-        return const HomePage();
-      },
-      routes: [
-        GoRoute(
-          path: Favorite.routeName,
-          builder: (context, state) {
-            return const Favorite();
-          },
-        ),
-      ],
-    ),
-  ],
-);
-
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const TestingApp(),
-    );
-  }
+  State<MyApp> createState() => _MyAppState();
 }
 
-class TestingApp extends StatelessWidget {
-  const TestingApp({super.key});
+class _MyAppState extends State<MyApp> {
+  // This widget is the root of your application.
+
+    @override
+  void dispose() {
+    disposeDependency();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<Favorites>(
-      create: (context) => Favorites(),
-      child: MaterialApp.router(
-        title: 'Testing Sample',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-          useMaterial3: true,
+    return MaterialApp.router(
+      restorationScopeId: 'momo_app',
+      title: 'MoMo Go',
+      debugShowCheckedModeBanner: false,
+      theme: _buildRallyTheme(),
+      routerConfig: AppRoutes.instance.getRouter(
+          parentKey: GlobalKey<NavigatorState>(),
+          shellKey: GlobalKey<NavigatorState>()),
+    );
+  }
+
+  ThemeData _buildRallyTheme() {
+    final base = ThemeData.dark();
+    return ThemeData(
+      appBarTheme: AppBarTheme(
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        backgroundColor: MomoColors.primaryBackground,
+        elevation: 0,
+      ),
+      scaffoldBackgroundColor: MomoColors.white,
+      // focusColor: MomoColors.focusColor,
+      textTheme: _buildRallyTextTheme(base.textTheme),
+      inputDecorationTheme: const InputDecorationTheme(
+        labelStyle: TextStyle(
+          color: MomoColors.black,
+          fontWeight: FontWeight.w500,
         ),
-        routerConfig: _router,
+        filled: true,
+        fillColor: MomoColors.inputBackground,
+        focusedBorder: InputBorder.none,
+      ),
+      visualDensity: VisualDensity.comfortable,
+      colorScheme: base.colorScheme.copyWith(
+        primary: MomoColors.primaryBackground,
       ),
     );
+  }
+
+  TextTheme _buildRallyTextTheme(TextTheme base) {
+    return base
+        .copyWith(
+          bodyMedium: GoogleFonts.robotoCondensed(
+            fontSize: 14,
+            fontWeight: FontWeight.w400,
+            letterSpacing: letterSpacingOrNone(0.5),
+          ),
+          bodyLarge: GoogleFonts.eczar(
+            fontSize: 40,
+            fontWeight: FontWeight.w400,
+            letterSpacing: letterSpacingOrNone(1.4),
+          ),
+          labelLarge: GoogleFonts.robotoCondensed(
+            fontWeight: FontWeight.w700,
+            letterSpacing: letterSpacingOrNone(2.8),
+          ),
+          headlineSmall: GoogleFonts.eczar(
+            fontSize: 40,
+            fontWeight: FontWeight.w600,
+            letterSpacing: letterSpacingOrNone(1.4),
+          ),
+        )
+        .apply(
+          displayColor: Colors.black,
+          bodyColor: Colors.black,
+        );
   }
 }
